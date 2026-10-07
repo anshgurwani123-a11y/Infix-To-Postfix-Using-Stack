@@ -3,25 +3,18 @@ import java.util.Stack;
 
 public class InfixToPostfix {
 
-    // Returns precedence of operators
     static int precedence(char ch) {
-        switch (ch) {
-            case '+':
-            case '-':
-                return 1;
+        if (ch == '+' || ch == '-')
+            return 1;
+        if (ch == '*' || ch == '/')
+            return 2;
+        if (ch == '^')
+            return 3;
 
-            case '*':
-            case '/':
-                return 2;
-
-            case '^':
-                return 3;
-        }
-        return -1;
+        return 0;
     }
 
-    // Converts infix expression to postfix expression
-    static String infixToPostfix(String infix) {
+    static String convertToPostfix(String infix) {
 
         Stack<Character> stack = new Stack<>();
         StringBuilder postfix = new StringBuilder();
@@ -30,26 +23,24 @@ public class InfixToPostfix {
 
             char ch = infix.charAt(i);
 
-            // If operand, add directly to postfix
             if (Character.isLetterOrDigit(ch)) {
                 postfix.append(ch);
             }
-
-            // If opening bracket, push into stack
             else if (ch == '(') {
                 stack.push(ch);
             }
-
-            // If closing bracket, pop until '('
             else if (ch == ')') {
+
                 while (!stack.isEmpty() && stack.peek() != '(') {
                     postfix.append(stack.pop());
                 }
-                stack.pop();
-            }
 
-            // If operator
+                if (!stack.isEmpty()) {
+                    stack.pop();
+                }
+            }
             else {
+
                 while (!stack.isEmpty()
                         && stack.peek() != '('
                         && precedence(stack.peek()) >= precedence(ch)) {
@@ -61,7 +52,6 @@ public class InfixToPostfix {
             }
         }
 
-        // Pop remaining operators
         while (!stack.isEmpty()) {
             postfix.append(stack.pop());
         }
@@ -76,7 +66,7 @@ public class InfixToPostfix {
         System.out.print("Enter infix expression: ");
         String infix = sc.nextLine();
 
-        String postfix = infixToPostfix(infix);
+        String postfix = convertToPostfix(infix);
 
         System.out.println("Postfix expression: " + postfix);
 
